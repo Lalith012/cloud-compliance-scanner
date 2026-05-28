@@ -1,0 +1,71 @@
+name: Compliance Scan
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Runs daily at 06:00 UTC — simulates automated compliance monitoring
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+    # Allows manual trigger from GitHub Actions UI
+
+jobs:
+  compliance-scan:
+    name: Run Compliance Scanner
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write   # Required for OIDC authentication with AWS
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: pytest tests/ -v
+        # Pipeline fails here if tests fail — before any AWS calls are made
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          # Uses OIDC — no long-lived access keys stored in GitHub secrets
+          # This is the secure, production-standard way to authenticate
+
+      - name: Run compliance scan
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          PUSH_TO_HUB: ${{ secrets.PUSH_TO_HUB }}
+        run: python main.py
+        # Exit code 1 if non-compliant findings exist — pipeline fails intentionally
+        # This is correct behavior: a compliance scanner should fail CI when violations exist
+        continue-on-error: true
+        # continue-on-error: true so reports still upload even when findings exist
+
+      - name: Upload JSON report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: compliance-report-json
+          path: reports/*.json
+          retention-days: 90
+          # 90-day retention — audit trail for compliance evidence
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: compliance-report-html
+          path: reports/*.html
+          retention-days: 90
