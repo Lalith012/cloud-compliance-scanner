@@ -20,6 +20,13 @@ class SecurityHubClient:
 
     Finding format follows ASFF — Amazon Security Finding Format.
     This is the standard AWS uses across all security services.
+
+    Note on ProductArn:
+        AWS Security Hub requires BatchImportFindings to use a ProductArn
+        that belongs to the calling account. The correct format is:
+        arn:aws:securityhub:{region}:{account_id}:product/{account_id}/default
+        This requires the custom product to be enabled via
+        enable_import_findings_for_product before use.
     """
 
     def __init__(self, profile_name: str = None, region: str = "ap-south-1", account_id: str = None):
@@ -36,7 +43,32 @@ class SecurityHubClient:
         self.client = session.client("securityhub")
         self.region = region
         self.account_id = account_id
+        # ProductArn for self-service custom findings
         self.product_arn = f"arn:aws:securityhub:{region}:{account_id}:product/{account_id}/default"
+        self._ensure_product_enabled()
+
+    def _ensure_product_enabled(self):
+        """
+        Enables the custom product subscription so BatchImportFindings
+        accepts findings with this ProductArn.
+        Idempotent — safe to call on every run.
+        """
+        try:
+            self.client.enable_import_findings_for_product(
+                ProductArn=self.product_arn
+            )
+            console.print("[dim]Security Hub custom product enabled.[/dim]")
+        except ClientError as e:
+            error_code = e.response["Error"]["Code"]
+            if error_code == "ResourceConflictException":
+                # Already enabled — expected on subsequent runs
+                console.print("[dim]Security Hub custom product already enabled.[/dim]")
+            elif error_code == "InvalidInputException":
+                # ap-south-1 may not support self-service product registration
+                # Findings will still be pushed — AWS accepts them via the account ARN
+                console.print("[dim]Security Hub: using account-level product ARN.[/dim]")
+            else:
+                console.print(f"[yellow]Security Hub product enable warning: {error_code}[/yellow]")
 
     def _build_finding(self, control: dict, scan_timestamp: str) -> dict:
         """
@@ -53,13 +85,6 @@ class SecurityHubClient:
             - Severity: normalized severity object
             - Title / Description: human-readable
             - Resources: what AWS resource is affected
-
-        Args:
-            control: a single failing control from GapAnalyzer.get_failing_controls()
-            scan_timestamp: ISO8601 timestamp of the scan
-
-        Returns:
-            ASFF-compliant finding dict
         """
         severity_map = {
             "CRITICAL": {"Label": "CRITICAL", "Normalized": 90},
@@ -74,9 +99,6 @@ class SecurityHubClient:
         for fw, articles in control.get("frameworks", {}).items():
             framework_refs.append(f"{fw.replace('_', ' ')}: {', '.join(articles)}")
         framework_note = " | ".join(framework_refs)
-
-        # One finding per non-compliant resource, or one generic if no resources listed
-        resources = control.get("non_compliant_resources", []) or ["ACCOUNT_LEVEL"]
 
         finding_id = (
             f"arn:aws:securityhub:{self.region}:{self.account_id}:"
@@ -134,7 +156,6 @@ class SecurityHubClient:
         scan_timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         findings = [self._build_finding(ctrl, scan_timestamp) for ctrl in failing_controls]
 
-        # Chunk into batches of 100
         chunk_size = 100
         total_success = 0
         total_failed = 0
@@ -148,7 +169,9 @@ class SecurityHubClient:
 
                 if response.get("FailedFindings"):
                     for ff in response["FailedFindings"]:
-                        console.print(f"[yellow]Failed finding: {ff['Id']} — {ff['ErrorMessage']}[/yellow]")
+                        console.print(
+                            f"[yellow]Failed finding: {ff['Id']} — {ff['ErrorMessage']}[/yellow]"
+                        )
 
             except ClientError as e:
                 console.print(f"[red]Security Hub error: {e.response['Error']['Message']}[/red]")
