@@ -17,25 +17,27 @@ Most compliance tools tell you *what* is non-compliant. This scanner tells you *
 
 ## Architecture
 
+```
 AWS Config Rules (12)
-│
-▼
+        │
+        ▼
 config_client.py       ← Fetches compliance status via boto3
-│
-▼
+        │
+        ▼
 framework_mapper.py    ← Maps each rule to GDPR / UAE PDPL / Essential Eight articles
-│
-▼
+        │
+        ▼
 gap_analysis.py        ← Calculates per-framework scores + cross-framework priority gaps
-│
-▼
+        │
+        ▼
 report_generator.py    ← Outputs JSON + HTML audit-ready reports
-│
-▼
+        │
+        ▼
 security_hub.py        ← Pushes ASFF-format findings to AWS Security Hub
-│
-▼
+        │
+        ▼
 GitHub Actions CI/CD   ← Runs on every push + daily cron, uploads reports as artifacts
+```
 
 ---
 
@@ -95,27 +97,26 @@ This answers: *"If I can only fix 4 things, which 4 fixes close the most gaps ac
 
 ## Project Structure
 
+```
 cloud-compliance-scanner/
-├── .github/
-│   └── workflows/
-│       └── compliance-scan.yml    # CI/CD pipeline
+├── .github/workflows/compliance-scan.yml    # CI/CD pipeline
 ├── scanner/
-│   ├── config_client.py           # AWS Config API integration
-│   ├── framework_mapper.py        # Rule → framework mapping
-│   ├── gap_analysis.py            # Cross-framework scoring
-│   ├── report_generator.py        # JSON + HTML report generation
-│   └── security_hub.py            # ASFF findings push to Security Hub
-├── rules/
-│   └── framework_mappings.json    # Control → framework mapping data
+│   ├── config_client.py                     # AWS Config API integration
+│   ├── framework_mapper.py                  # Rule → framework mapping
+│   ├── gap_analysis.py                      # Cross-framework scoring
+│   ├── report_generator.py                  # JSON + HTML report generation
+│   └── security_hub.py                      # ASFF findings push to Security Hub
+├── rules/framework_mappings.json            # Control → framework mapping data
 ├── misconfig_demo/
-│   ├── introduce_misconfig.py     # Introduces intentional violations
-│   └── remediate_misconfig.py     # Remediates violations
+│   ├── introduce_misconfig.py               # Introduces intentional violations
+│   └── remediate_misconfig.py              # Remediates violations
 ├── tests/
-│   ├── test_mapper.py             # Framework mapper tests
-│   └── test_gap_analysis.py       # Gap analysis tests
-├── main.py                        # Pipeline orchestrator
+│   ├── test_mapper.py                       # Framework mapper tests
+│   └── test_gap_analysis.py                 # Gap analysis tests
+├── main.py                                  # Pipeline orchestrator
 ├── requirements.txt
-└── .env.example                   # Environment variable template
+└── .env.example                             # Environment variable template
+```
 
 ---
 
