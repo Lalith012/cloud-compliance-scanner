@@ -43,7 +43,7 @@ def main():
     ))
 
     # --- Configuration ---
-    profile     = os.getenv("AWS_PROFILE", "member")
+    profile     = os.getenv("AWS_PROFILE") or None
     region      = os.getenv("AWS_REGION", "ap-south-1")
     account_id  = os.getenv("AWS_ACCOUNT_ID", "664858858896")
     push_to_hub = os.getenv("PUSH_TO_HUB", "false").lower() == "true"
