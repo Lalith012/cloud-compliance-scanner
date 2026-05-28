@@ -1,0 +1,124 @@
+{
+  "rules": [
+    {
+      "config_rule": "S3_BUCKET_PUBLIC_ACCESS_PROHIBITED",
+      "description": "S3 buckets must block all public access",
+      "severity": "CRITICAL",
+      "frameworks": {
+        "GDPR": ["Article 5(1)(f)", "Article 32"],
+        "UAE_PDPL": ["Article 16", "Article 20"],
+        "Essential_Eight": ["User Application Hardening"]
+      }
+    },
+    {
+      "config_rule": "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED",
+      "description": "S3 buckets must have server-side encryption enabled",
+      "severity": "HIGH",
+      "frameworks": {
+        "GDPR": ["Article 32"],
+        "UAE_PDPL": ["Article 16"],
+        "Essential_Eight": ["Encrypt Data at Rest"]
+      }
+    },
+    {
+      "config_rule": "S3_BUCKET_VERSIONING_ENABLED",
+      "description": "S3 buckets must have versioning enabled",
+      "severity": "MEDIUM",
+      "frameworks": {
+        "GDPR": ["Article 32"],
+        "UAE_PDPL": ["Article 16"],
+        "Essential_Eight": ["Regular Backups"]
+      }
+    },
+    {
+      "config_rule": "ROOT_ACCOUNT_MFA_ENABLED",
+      "description": "Root account must have MFA enabled",
+      "severity": "CRITICAL",
+      "frameworks": {
+        "GDPR": ["Article 32"],
+        "UAE_PDPL": ["Article 16", "Article 20"],
+        "Essential_Eight": ["Multi-Factor Authentication"]
+      }
+    },
+    {
+      "config_rule": "IAM_ROOT_ACCESS_KEY_CHECK",
+      "description": "Root account must not have active access keys",
+      "severity": "CRITICAL",
+      "frameworks": {
+        "GDPR": ["Article 32"],
+        "UAE_PDPL": ["Article 20"],
+        "Essential_Eight": ["Restrict Administrative Privileges"]
+      }
+    },
+    {
+      "config_rule": "IAM_PASSWORD_POLICY",
+      "description": "IAM password policy must meet minimum requirements",
+      "severity": "HIGH",
+      "frameworks": {
+        "GDPR": ["Article 32"],
+        "UAE_PDPL": ["Article 16"],
+        "Essential_Eight": ["Multi-Factor Authentication"]
+      }
+    },
+    {
+      "config_rule": "CLOUD_TRAIL_ENABLED",
+      "description": "CloudTrail must be enabled in all regions",
+      "severity": "CRITICAL",
+      "frameworks": {
+        "GDPR": ["Article 30", "Article 32"],
+        "UAE_PDPL": ["Article 16", "Article 22"],
+        "Essential_Eight": ["Audit Logging"]
+      }
+    },
+    {
+      "config_rule": "CLOUD_TRAIL_LOG_FILE_VALIDATION_ENABLED",
+      "description": "CloudTrail log file validation must be enabled",
+      "severity": "HIGH",
+      "frameworks": {
+        "GDPR": ["Article 32"],
+        "UAE_PDPL": ["Article 22"],
+        "Essential_Eight": ["Audit Logging"]
+      }
+    },
+    {
+      "config_rule": "CMK_BACKING_KEY_ROTATION_ENABLED",
+      "description": "KMS key rotation must be enabled",
+      "severity": "HIGH",
+      "frameworks": {
+        "GDPR": ["Article 32"],
+        "UAE_PDPL": ["Article 16"],
+        "Essential_Eight": ["Encrypt Data at Rest"]
+      }
+    },
+    {
+      "config_rule": "EC2_EBS_ENCRYPTION_BY_DEFAULT",
+      "description": "EBS encryption by default must be enabled",
+      "severity": "HIGH",
+      "frameworks": {
+        "GDPR": ["Article 32"],
+        "UAE_PDPL": ["Article 16"],
+        "Essential_Eight": ["Encrypt Data at Rest"]
+      }
+    },
+    {
+      "config_rule": "RESTRICTED_INCOMING_TRAFFIC",
+      "description": "Security groups must not allow unrestricted SSH access",
+      "severity": "CRITICAL",
+      "frameworks": {
+        "GDPR": ["Article 32"],
+        "UAE_PDPL": ["Article 16", "Article 20"],
+        "Essential_Eight": ["Limit Network Access"]
+      }
+    },
+    {
+      "config_rule": "VPC_FLOW_LOGS_ENABLED",
+      "description": "VPC flow logs must be enabled",
+      "severity": "HIGH",
+      "frameworks": {
+        "GDPR": ["Article 30", "Article 32"],
+        "UAE_PDPL": ["Article 22"],
+        "Essential_Eight": ["Audit Logging"]
+      }
+    }
+  ]
+}
