@@ -1,5 +1,10 @@
 # Cloud Compliance Scanner
 
+![CI](https://github.com/Lalith012/cloud-compliance-scanner/actions/workflows/compliance-scan.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3.11-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Frameworks](https://img.shields.io/badge/frameworks-GDPR%20%7C%20UAE%20PDPL%20%7C%20Essential%20Eight-orange)
+
 Automated cloud compliance posture scanner mapped to **GDPR**, **UAE PDPL**, and **Australia Essential Eight** frameworks. Built with Python, AWS Config, and GitHub Actions.
 
 ---
@@ -192,6 +197,10 @@ Security Hub custom finding display requires partner product registration in ent
 ---
 
 ## Sample Report
+
+![Compliance Report - Scores](docs/report-screenshot-1.png)
+
+![Compliance Report - Priority Gaps](docs/report-screenshot-2.png)
 
 **Terminal output:**
 
