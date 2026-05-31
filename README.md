@@ -196,23 +196,25 @@ Security Hub custom finding display requires partner product registration in ent
 
 ---
 
-## Sample Report
+### Sample Report
 
+### After Remediation — 100% Compliant
+![Compliance Report - 100% Score](docs/report-screenshot-clean-1.png)
+![Compliance Report - Clean Priority Gaps](docs/report-screenshot-clean-2.png)
+
+### Before Remediation — Violations Detected
 ![Compliance Report - Scores](docs/report-screenshot-1.png)
-
 ![Compliance Report - Priority Gaps](docs/report-screenshot-2.png)
 
-**Terminal output:**
+**Terminal output (post-remediation):**
 
 Framework Scores:
-GDPR                 63.6% (7/11 compliant)
-UAE_PDPL             63.6% (7/11 compliant)
-Essential_Eight      63.6% (7/11 compliant)
-Priority Gaps (fix these first):
-#1 HIGH IAM_PASSWORD_POLICY (impacts 3 frameworks)
-#2 HIGH EC2_EBS_ENCRYPTION_BY_DEFAULT (impacts 3 frameworks)
-#3 HIGH VPC_FLOW_LOGS_ENABLED (impacts 3 frameworks)
-#4 MEDIUM S3_BUCKET_VERSIONING_ENABLED (impacts 3 frameworks)
+GDPR                 100.0% (11/11 compliant)
+UAE_PDPL             100.0% (11/11 compliant)
+Essential_Eight      100.0% (11/11 compliant)
+Overall Score: 100.0%
+Non-compliant controls: 0
+SCAN COMPLETE — All controls compliant.
 
 HTML and JSON reports are generated in `reports/` and uploaded as GitHub Actions artifacts on every pipeline run.
 
